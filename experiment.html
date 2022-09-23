@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="jsPsych Stroop Color/Word Task" />
+    <meta name="keywords" content="HTML, CSS, JavaScript" />
+    <meta name="author" content="Jason Steffener, NCMLab" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stroop Color/Word</title>
+
+    <script src="./jspsych/jspsych.js"></script>
+    <script src="./jspsych/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="./jspsych/plugins/jspsych-video-keyboard-response.js"></script>
+    <script src="./jspsych/plugins/jspsych-image-keyboard-response.js"></script>
+    <script src="./jspsych/plugins/jspsych-fullscreen.js"></script>
+    <script src="./jspsych/plugins/jspsych-html-button-response.js"></script>
+    <script src="./jspsych/plugins/jspsych-instructions.js"></script>
+    <script src="./views/Stroop_Setup_EN.js"></script>
+    <script src="./jspsych/plugins/jspsych-webgazer-init-camera.js"></script>
+    <script src="./jspsych/plugins/jspsych-survey-text.js"></script>
+    <script src="./jspsych/plugins/jspsych-survey-likert.js"></script>
+
+    <script src="./jspsych/plugins/jspsych-webgazer-validate.js"></script>
+    <script src="./jspsych/plugins/jspsych-external-html.js"></script>
+    <script src="./jspsych/plugins/jspsych-call-function.js"></script>
+    <script src="./jspsych/plugins/jspsych-webgazer-calibrate.js"></script>
+    <script src="./jspsych/examples/js/webgazer/webgazer.js"></script>
+    <script src="./jspsych/extensions/jspsych-ext-webgazer.js"></script>
+    <script src="https://smtpjs.com/v3/smtp.js"></script>
+    <script src="../views/tmt.js"></script>
+
+    <script src="./jspsych/plugins/jspsych-image-button-response.js"></script>
+    <script src="./jspsych/plugins/jspsych-preload.js"></script>
+    <!-- <link href="jspsych/css/jspsych.css" rel="stylesheet" type="text/css"> -->
+    <link href="./jspsych/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <script src="./saver/fileSaver.js"></script>
+    <link href="./css/Stroop.css" rel="stylesheet" />
+    <style>
+      .stimulus {
+        font-size: StimulusFontSize;
+      }
+    </style>
+  </head>
+  <body>
+    <video controls></video>
+  </body>
+  <script>
+    var subject_id = jsPsych.randomization.randomID(15);
+    subject_id = subject_id.toString();
+    var init_camera = {
+      type: "webgazer-init-camera", // what's with the extra width
+    };
+    var overview = {
+      type: "image-button-response",
+      stimulus: "../../assets/images/overview.png",
+      choices: ["continue"],
+      prompt:
+        "<p>You'll see detailed instructions ahead. Press continue to proceed.</p>",
+    };
+
+    var scale_1 = ["Yes"];
+
+    var likert_page = {
+      type: "survey-likert",
+      questions: [
+        {
+          prompt: "Does your system have a working webcam?",
+          name: "Webcam",
+          labels: scale_1,
+          required: true,
+        },
+        {
+          prompt:
+            "Is your room sufficiently lit with the light being in front of your face rather than back?",
+          name: "Light",
+          labels: scale_1,
+          required: true,
+        },
+        {
+          prompt:
+            "You voluntarily participate in this study and have already signed the consent form.",
+          name: "Consent",
+          labels: scale_1,
+          required: true,
+        },
+      ],
+      preamble: "<h1>Before you proceed</h1>",
+      randomize_question_order: false,
+    };
+
+    var validation = {
+      type: "webgazer-calibrate",
+      randomize_calibration_order: true,
+      repetitions_per_point: 1, //back to 2
+    };
+    var survey_page1 = {
+      type: "survey-text",
+      questions: [
+        { prompt: "Name : ", columns: 50, name: "firstname" },
+        { prompt: "Age : ", columns: 3, name: "Age", required: true },
+        {
+          prompt: "Gender",
+          placeholder: " M/F",
+          columns: 15,
+          name: "Gender",
+          required: true,
+        },
+        {
+          prompt: "Have you taken this test before?",
+          placeholder: "type Yes/No",
+          columns: 15,
+          name: "prior_practice",
+        },
+        {
+          prompt:
+            "Do you have any pre condition (such as ADHD, ASD, Autism, Dyslexia, other Learning Disabilities etc.)",
+          placeholder: "type Yes/No",
+          columns: 15,
+          name: "Medical_history",
+          required: true,
+        },
+        {
+          prompt: "If yes, please mention about it",
+          placeholder:
+            "ADHD/ ASD/ Autism/ Dyslexia/ Other Learning Disabilities/ Prefer not to say",
+          columns: 70,
+          name: "Medical_history_2",
+        },
+      ],
+      preamble: "<h1>Basic information</h1>",
+    };
+
+    var instructions_cal = {
+      type: "html-button-response",
+      stimulus:
+        '<div style="width: 800px;border: thin solid #0000FF ; border-radius: 10px ;">' +
+        `
+             <ul>
+             <li style="text-align:left; padding:8px; font-size: 18px">    Now we will calibrate the web gazer.</li>
+             <li style="text-align:left; padding:8px; font-size: 18px">It will take 2-3 minutes.</li>
+             <li style="text-align:left; padding:8px; font-size: 18px">On the next screen you will see a sequence of black dots. There will be 20 of them.</li>
+             <li style="text-align:left; padding:8px; font-size: 18px">Keep your head steady and look at each dot for atleast 3 seconds, then click the dot.</li>
+             </ul>` +
+        "</div>",
+      choices: ["Continue"],
+    };
+
+    var validation_instructions = {
+      type: "html-button-response",
+      stimulus: `<div style="width: 800px;border: thin solid #0000FF ; border-radius: 10px ;">
+       <p>Let's see how accurate the eye tracking is. </p>
+       <p>Keep your head still, and move your eyes to focus on each dot as it appears.</p>
+       <p>You do not need to click on the dots. Just move your eyes to look at the dots.</p>
+     `,
+      choices: ["Click to begin"],
+      post_trial_gap: 1000,
+    };
+
+    var validate = {
+      type: "webgazer-validate",
+      validation_points: [
+        [25, 25],
+        [25, 75],
+        [75, 25],
+        [75, 75],
+      ],
+      show_validation_data: true,
+      on_finish: function () {
+        // jsPsych.extensions["webgazer"].pause();
+        jsPsych.extensions["webgazer"].hidePredictions();
+      },
+    };
+
+    var instructions_video = {
+      type: "html-button-response",
+      stimulus:
+        '<div style="width: 800px;border: thin solid #0000FF ; border-radius: 10px ;">' +
+        `
+             <ul>
+             <li style="text-align:left; padding:8px; font-size: 18px">Now you are required to watch 4 videos that play and then answer a questionnaire.</li>
+             <li style="text-align:left; padding:8px; font-size: 18px">Each video will be 4-5 minutes long. You are advised to take notes. Don't use the keyboard.</li>
+             <li style="text-align:left; padding:8px; font-size: 18px">The video will not pause. The video will be followed by a questionnaire.</li>
+             </ul>` +
+        "</div>",
+      choices: ["Continue"],
+    };
+
+    var videoPlayer1 = {
+      type: "video-keyboard-response",
+      stimulus: ["./videos/Addiction_Science.mp4"],
+      trial_ends_after_video: true,
+    };
+    var videoPlayer2 = {
+      type: "video-keyboard-response",
+      stimulus: ["./videos/Energy_Environment.mp4"],
+      trial_ends_after_video: true,
+    };
+    var videoPlayer3 = {
+      type: "video-keyboard-response",
+      stimulus: ["./videos/Planks_Constant.mp4"],
+      trial_ends_after_video: true,
+    };
+    var videoPlayer4 = {
+      type: "video-keyboard-response",
+      stimulus: ["./videos/Probability.mp4"],
+      trial_ends_after_video: true,
+    };
+    var questionnaire1 = {
+      type: "html-button-response",
+      stimulus:
+        '<div style="width: 800px;border: thin solid #0000FF ; border-radius: 10px ;">' +
+        `
+             <ul>
+             <li style="text-align:left; padding:8px; font-size: 18px">Please fill in the following G-Form.</li>
+             <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfqhHSo0wP0yeshHlxNxXTFzz7MfxFfJPJTmPUB5jPKNU-trw/viewform?embedded=true" width="640" height="3501" frameborder="0" marginheight="0" marginwidth="0">Addiction Science Questionnaire</iframe>
+             </ul>` +
+        "</div>",
+      choices: ["Continue"],
+    };
+    var questionnaire2 = {
+      type: "html-button-response",
+      stimulus:
+        '<div style="width: 800px;border: thin solid #0000FF ; border-radius: 10px ;">' +
+        `
+             <ul>
+             <li style="text-align:left; padding:8px; font-size: 18px">Please fill in the following G-Form.</li>
+             <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdwV8s7qgZtLwsjO9eH9G53pOFPCbxhKRs0q_sHKQkJnb5VzQ/viewform?embedded=true" width="640" height="3429" frameborder="0" marginheight="0" marginwidth="0">Energy Environment Questionnaire</iframe></ul>` +
+        "</div>",
+      choices: ["Continue"],
+    };
+    var questionnaire3 = {
+      type: "html-button-response",
+      stimulus:
+        '<div style="width: 800px;border: thin solid #0000FF ; border-radius: 10px ;">' +
+        `
+             <ul>
+             <li style="text-align:left; padding:8px; font-size: 18px">Please fill in the following G-Form.</li>
+             <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdHy-CfqvHqZ99sE4lX6cJ-aNjFbSmOF6w1xTNoW3t9xNNfbw/viewform?embedded=true" width="640" height="3429" frameborder="0" marginheight="0" marginwidth="0">Planck's Constant Questionnaire</iframe></ul>` +
+        "</div>",
+      choices: ["Continue"],
+    };
+    var questionnaire4 = {
+      type: "html-button-response",
+      stimulus:
+        '<div style="width: 800px;border: thin solid #0000FF ; border-radius: 10px ;">' +
+        `
+             <ul>
+             <li style="text-align:left; padding:8px; font-size: 18px">Please fill in the following G-Form.</li>
+             <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdsSHNLdBm0PxuuBLOg47jj-LN8b0pm5rBmPpLga5fSmm_t7g/viewform?embedded=true" width="640" height="3429" frameborder="0" marginheight="0" marginwidth="0">Probability Questionnaire</iframe></ul>` +
+        "</div>",
+      choices: ["Continue"],
+    };
+    var subject_id = jsPsych.randomization.randomID(15);
+    subject_id = subject_id.toString() + survey_page1.firstname;
+    jsPsych.data.addProperties({
+      subject: subject_id,
+    });
+
+    var timeline = [];
+
+    timeline.push({
+      type: "fullscreen",
+      fullscreen_mode: true,
+    });
+    timeline.push(overview);
+    timeline.push(likert_page);
+    var val = {
+      timeline: [validation],
+      repetitions: 2,
+    };
+
+    timeline.push(survey_page1);
+
+    timeline.push(init_camera);
+    timeline.push({
+      type: "fullscreen",
+      fullscreen_mode: true,
+    });
+    timeline.push(instructions_cal);
+    timeline.push(val);
+    timeline.push(validation_instructions);
+    timeline.push(validate);
+
+    timeline.push(instructions_video);
+
+    timeline.push(videoPlayer1);
+    timeline.push(questionnaire1);
+    timeline.push(videoPlayer2);
+    timeline.push(questionnaire2);
+    timeline.push(videoPlayer3);
+    timeline.push(questionnaire3);
+    timeline.push(videoPlayer4);
+    timeline.push(questionnaire4);
+
+    let constraintObj = {
+      audio: false,
+      video: {
+        facingMode: "user",
+        width: { min: 640, ideal: 1280, max: 1920 },
+        height: { min: 480, ideal: 720, max: 1080 },
+      },
+    };
+
+    if (navigator.mediaDevices === undefined) {
+      navigator.mediaDevices = {};
+      navigator.mediaDevices.getUserMedia = function (constraintObj) {
+        let getUserMedia =
+          navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        if (!getUserMedia) {
+          return Promise.reject(
+            new Error("getUserMedia is not implemented in this browser")
+          );
+        }
+        return new Promise(function (resolve, reject) {
+          getUserMedia.call(navigator, constraintObj, resolve, reject);
+        });
+      };
+    } else {
+      navigator.mediaDevices
+        .enumerateDevices()
+        .then((devices) => {
+          devices.forEach((device) => {
+            console.log(device.kind.toUpperCase(), device.label);
+          });
+        })
+        .catch((err) => {
+          console.log(err.name, err.message);
+        });
+    }
+    navigator.mediaDevices
+      .getUserMedia(constraintObj)
+      .then(function (mediaStreamObj) {
+        let video = document.querySelector("video");
+        if ("srcObject" in video) {
+          video.srcObject = mediaStreamObj;
+        } else {
+          video.src = window.URL.createObjectURL(mediaStreamObj);
+        }
+        video.onloadedmetadata = function (ev) {
+          video.play();
+        };
+
+        let mediaRecorder = new MediaRecorder(mediaStreamObj);
+        let chunks = [];
+        mediaRecorder.start();
+        console.log(mediaRecorder.state);
+
+        mediaRecorder.ondataavailable = function (ev) {
+          chunks.push(ev.data);
+        };
+        mediaRecorder.onstop = (ev) => {
+          let blob = new Blob(chunks, { type: "video/mp4;" });
+          chunks = [];
+
+          var filename = "data_video.mp4";
+          console.log(blob);
+          saveAs(blob, filename);
+
+          console.log("File saved Locally");
+        };
+
+        var check_consent = function (elem) {
+          if (document.getElementById("consent_checkbox").checked) {
+            return true;
+          } else {
+            alert(
+              "If you wish to participate, you must check the box next to the statement 'I agree to participate in this study.'"
+            );
+            return false;
+          }
+          return false;
+        };
+
+        var myfunc = function () {
+          jsPsych.data.get().localSave("csv", "EngageMeDataCollection.csv");
+          jsPsych.extensions["webgazer"].pause();
+          jsPsych.extensions["webgazer"].hidePredictions();
+          jsPsych.data.displayData();
+          mediaRecorder.stop();
+          console.log(mediaRecorder.state);
+        };
+        var data_save = {
+          type: "call-function",
+          func: myfunc,
+        };
+        timeline.push(data_save);
+
+        jsPsych.init({
+          timeline: timeline,
+          show_progress_bar: true,
+          extensions: [
+            { type: "webgazer", params: { round_predictions: false } },
+          ],
+          on_interaction_data_update: function (data) {
+            console.log(JSON.stringify(data));
+          },
+          on_finish: function () {},
+        });
+      });
+  </script>
+</html>
