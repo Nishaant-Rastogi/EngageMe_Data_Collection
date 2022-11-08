@@ -40,7 +40,14 @@
     </style>
   </head>
   <body>
-    <video controls></video>
+    <video class="video"></video>
+    <video
+      class="recording"
+      autoplay
+      muted
+      width="500px"
+      height="500px"
+    ></video>
   </body>
   <script>
     var subject_id = jsPsych.randomization.randomID(15);
@@ -133,12 +140,12 @@
       stimulus:
         '<div style="width: 800px;border: thin solid #0000FF ; border-radius: 10px ;">' +
         `
-             <ul>
-             <li style="text-align:left; padding:8px; font-size: 18px">    Now we will calibrate the web gazer.</li>
-             <li style="text-align:left; padding:8px; font-size: 18px">It will take 2-3 minutes.</li>
-             <li style="text-align:left; padding:8px; font-size: 18px">On the next screen you will see a sequence of black dots. There will be 20 of them.</li>
-             <li style="text-align:left; padding:8px; font-size: 18px">Keep your head steady and look at each dot for atleast 3 seconds, then click the dot.</li>
-             </ul>` +
+                 <ul>
+                 <li style="text-align:left; padding:8px; font-size: 18px">    Now we will calibrate the web gazer.</li>
+                 <li style="text-align:left; padding:8px; font-size: 18px">It will take 2-3 minutes.</li>
+                 <li style="text-align:left; padding:8px; font-size: 18px">On the next screen you will see a sequence of black dots. There will be 20 of them.</li>
+                 <li style="text-align:left; padding:8px; font-size: 18px">Keep your head steady and look at each dot for atleast 3 seconds, then click the dot.</li>
+                 </ul>` +
         "</div>",
       choices: ["Continue"],
     };
@@ -146,10 +153,10 @@
     var validation_instructions = {
       type: "html-button-response",
       stimulus: `<div style="width: 800px;border: thin solid #0000FF ; border-radius: 10px ;">
-       <p>Let's see how accurate the eye tracking is. </p>
-       <p>Keep your head still, and move your eyes to focus on each dot as it appears.</p>
-       <p>You do not need to click on the dots. Just move your eyes to look at the dots.</p>
-     `,
+           <p>Let's see how accurate the eye tracking is. </p>
+           <p>Keep your head still, and move your eyes to focus on each dot as it appears.</p>
+           <p>You do not need to click on the dots. Just move your eyes to look at the dots.</p>
+         `,
       choices: ["Click to begin"],
       post_trial_gap: 1000,
     };
@@ -164,7 +171,6 @@
       ],
       show_validation_data: true,
       on_finish: function () {
-        // jsPsych.extensions["webgazer"].pause();
         jsPsych.extensions["webgazer"].hidePredictions();
       },
     };
@@ -174,11 +180,11 @@
       stimulus:
         '<div style="width: 800px;border: thin solid #0000FF ; border-radius: 10px ;">' +
         `
-             <ul>
-             <li style="text-align:left; padding:8px; font-size: 18px">Now you are required to watch 4 videos that play and then answer a questionnaire.</li>
-             <li style="text-align:left; padding:8px; font-size: 18px">Each video will be 4-5 minutes long. You are advised to take notes. Don't use the keyboard.</li>
-             <li style="text-align:left; padding:8px; font-size: 18px">The video will not pause. The video will be followed by a questionnaire.</li>
-             </ul>` +
+                 <ul>
+                 <li style="text-align:left; padding:8px; font-size: 18px">Now you are required to watch 4 videos that play and then answer a questionnaire.</li>
+                 <li style="text-align:left; padding:8px; font-size: 18px">Each video will be 4-5 minutes long. You are advised to take notes. Don't use the keyboard.</li>
+                 <li style="text-align:left; padding:8px; font-size: 18px">The video will not pause. The video will be followed by a questionnaire.</li>
+                 </ul>` +
         "</div>",
       choices: ["Continue"],
     };
@@ -205,48 +211,55 @@
     };
     var questionnaire1 = {
       type: "html-button-response",
+      alert: "Please answer the following questions",
       stimulus:
         '<div style="width: 800px;border: thin solid #0000FF ; border-radius: 10px ;">' +
         `
-             <ul>
-             <li style="text-align:left; padding:8px; font-size: 18px">Please fill in the following G-Form.</li>
-             <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfqhHSo0wP0yeshHlxNxXTFzz7MfxFfJPJTmPUB5jPKNU-trw/viewform?embedded=true" width="640" height="3501" frameborder="0" marginheight="0" marginwidth="0">Addiction Science Questionnaire</iframe>
-             </ul>` +
+                 <ul>
+                 <li style="text-align:left; font-size: 18px">Please fill in the following G-Form.</li>
+                 <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfqhHSo0wP0yeshHlxNxXTFzz7MfxFfJPJTmPUB5jPKNU-trw/viewform?embedded=true" width="640" height="3501" frameborder="0" marginheight="0" marginwidth="0">Addiction Science Questionnaire</iframe>
+                 </ul>` +
         "</div>",
       choices: ["Continue"],
     };
     var questionnaire2 = {
       type: "html-button-response",
+      alert: "Please answer the following questions",
       stimulus:
         '<div style="width: 800px;border: thin solid #0000FF ; border-radius: 10px ;">' +
         `
-             <ul>
-             <li style="text-align:left; padding:8px; font-size: 18px">Please fill in the following G-Form.</li>
-             <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdwV8s7qgZtLwsjO9eH9G53pOFPCbxhKRs0q_sHKQkJnb5VzQ/viewform?embedded=true" width="640" height="3429" frameborder="0" marginheight="0" marginwidth="0">Energy Environment Questionnaire</iframe></ul>` +
+                 <ul>
+                 <li style="text-align:left; font-size: 18px">Please fill in the following G-Form.</li>
+                 <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdwV8s7qgZtLwsjO9eH9G53pOFPCbxhKRs0q_sHKQkJnb5VzQ/viewform?embedded=true" width="640" height="3429" frameborder="0" marginheight="0" marginwidth="0">Energy Environment Questionnaire</iframe></ul>` +
         "</div>",
       choices: ["Continue"],
     };
     var questionnaire3 = {
       type: "html-button-response",
+      alert: "Please answer the following questions",
       stimulus:
         '<div style="width: 800px;border: thin solid #0000FF ; border-radius: 10px ;">' +
         `
-             <ul>
-             <li style="text-align:left; padding:8px; font-size: 18px">Please fill in the following G-Form.</li>
-             <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdHy-CfqvHqZ99sE4lX6cJ-aNjFbSmOF6w1xTNoW3t9xNNfbw/viewform?embedded=true" width="640" height="3429" frameborder="0" marginheight="0" marginwidth="0">Planck's Constant Questionnaire</iframe></ul>` +
+                 <ul>
+                 <li style="text-align:left; font-size: 18px">Please fill in the following G-Form.</li>
+                 <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdHy-CfqvHqZ99sE4lX6cJ-aNjFbSmOF6w1xTNoW3t9xNNfbw/viewform?embedded=true" width="640" height="3429" frameborder="0" marginheight="0" marginwidth="0">Planck's Constant Questionnaire</iframe></ul>` +
         "</div>",
       choices: ["Continue"],
     };
     var questionnaire4 = {
       type: "html-button-response",
+      alert: "Please answer the following questions",
       stimulus:
         '<div style="width: 800px;border: thin solid #0000FF ; border-radius: 10px ;">' +
         `
-             <ul>
-             <li style="text-align:left; padding:8px; font-size: 18px">Please fill in the following G-Form.</li>
-             <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdsSHNLdBm0PxuuBLOg47jj-LN8b0pm5rBmPpLga5fSmm_t7g/viewform?embedded=true" width="640" height="3429" frameborder="0" marginheight="0" marginwidth="0">Probability Questionnaire</iframe></ul>` +
+                 <ul>
+                 <li style="text-align:left; font-size: 18px">Please fill in the following G-Form.</li>
+                 <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdsSHNLdBm0PxuuBLOg47jj-LN8b0pm5rBmPpLga5fSmm_t7g/viewform?embedded=true" width="640" height="3429" frameborder="0" marginheight="0" marginwidth="0">Probability Questionnaire</iframe></ul>` +
         "</div>",
       choices: ["Continue"],
+    };
+    var after_response = function () {
+      alert("Please submit the questionnaire before continuing.");
     };
     var subject_id = jsPsych.randomization.randomID(15);
     subject_id = subject_id.toString() + survey_page1.firstname;
@@ -283,12 +296,16 @@
 
     timeline.push(videoPlayer1);
     timeline.push(questionnaire1);
+    // timeline.push(submit_questionnaire);
     timeline.push(videoPlayer2);
     timeline.push(questionnaire2);
+    // timeline.push(submit_questionnaire);
     timeline.push(videoPlayer3);
     timeline.push(questionnaire3);
+    // timeline.push(submit_questionnaire);
     timeline.push(videoPlayer4);
     timeline.push(questionnaire4);
+    // timeline.push(submit_questionnaire);
 
     let constraintObj = {
       audio: false,
@@ -298,6 +315,15 @@
         height: { min: 480, ideal: 720, max: 1080 },
       },
     };
+
+    var video = document.querySelector(".recording");
+    // var output = document.querySelector(".output");
+    // var start = document.querySelector(".start-btn");
+    // var stop = document.querySelector(".stop-btn");
+    // var anc = document.querySelector(".download-anc");
+    var data = [];
+
+    // In order record the screen with system audio
 
     if (navigator.mediaDevices === undefined) {
       navigator.mediaDevices = {};
@@ -325,10 +351,55 @@
           console.log(err.name, err.message);
         });
     }
+    var recording = navigator.mediaDevices
+      .getDisplayMedia({
+        video: {
+          mediaSource: "screen",
+        },
+        audio: true,
+      })
+      .then(async (e) => {
+        let audio = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: false,
+        });
+
+        video.srcObject = e;
+        let combine = new MediaStream([...e.getTracks(), ...audio.getTracks()]);
+
+        let recorder = new MediaRecorder(combine);
+        recorder.start();
+        data = [];
+        recorder.ondataavailable = (e) => {
+          data.push(e.data);
+          console.log(data);
+        };
+
+        recorder.onstop = () => {
+          let blob = new Blob(chunks, { type: "video/mp4;" });
+          data = [];
+
+          var filename = "screen_video.mp4";
+          console.log(blob);
+          saveAs(blob, filename);
+
+          console.log("File saved Locally");
+        };
+        var myfunc = function () {
+          recorder.stop();
+          console.log(recorder.state);
+        };
+        var screen_save = {
+          type: "call-function",
+          func: myfunc,
+        };
+        timeline.push(screen_save);
+      });
+
     navigator.mediaDevices
       .getUserMedia(constraintObj)
       .then(function (mediaStreamObj) {
-        let video = document.querySelector("video");
+        let video = document.querySelector(".video");
         if ("srcObject" in video) {
           video.srcObject = mediaStreamObj;
         } else {
@@ -350,7 +421,7 @@
           let blob = new Blob(chunks, { type: "video/mp4;" });
           chunks = [];
 
-          var filename = "data_video.mp4";
+          var filename = "camera_video.mp4";
           console.log(blob);
           saveAs(blob, filename);
 
